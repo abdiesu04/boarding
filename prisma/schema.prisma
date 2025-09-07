@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id(map: "User_pkey") @default(cuid())
+  email     String   @unique(map: "User_email_key")
+  password  String
+  firstName String
+  lastName  String
+  role      Role     @default(CLIENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Admin     Admin?
+  client    Client?
+
+  @@map("users")
+}
+
+model Client {
+  id                    String        @id(map: "Client_pkey") @default(cuid())
+  userId                String        @unique(map: "Client_userId_key")
+  ssn                   String
+  dob                   DateTime
+  phone                 String
+  address               String
+  city                  String
+  state                 String
+  zip                   String
+  hasMortgage           Boolean       @default(false)
+  loanAmount            String
+  monthlyIncome         String
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  fundingStatus         FundingStatus @default(PENDING)
+  creditReportCompleted Boolean?      @default(false)
+  documentsSigned       Boolean?      @default(false)
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Client_userId_fkey")
+  creditReport          CreditReport?
+  documents             Document[]
+
+  @@map("clients")
+}
+
+model Document {
+  id            String       @id(map: "Document_pkey") @default(cuid())
+  clientId      String
+  type          DocumentType
+  cloudinaryUrl String
+  cloudinaryId  String
+  fileName      String
+  fileSize      Int
+  mimeType      String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  client        Client       @relation(fields: [clientId], references: [id], onDelete: Cascade, map: "Document_clientId_fkey")
+
+  @@map("documents")
+}
+
+model CreditReport {
+  id          String             @id(map: "CreditReport_pkey") @default(cuid())
+  clientId    String             @unique(map: "CreditReport_clientId_key")
+  status      CreditReportStatus @default(PENDING)
+  requestedAt DateTime           @default(now())
+  receivedAt  DateTime?
+  notes       String?
+  completedAt DateTime?          @db.Timestamp(6)
+  createdAt   DateTime?          @db.Timestamp(6)
+  updatedAt   DateTime?          @updatedAt @db.Timestamp(6)
+  client      Client             @relation(fields: [clientId], references: [id], onDelete: Cascade, map: "CreditReport_clientId_fkey")
+
+  @@map("credit_reports")
+}
+
+model Admin {
+  id          String   @id
+  userId      String   @unique
+  permissions String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  users       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  CLIENT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum FundingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FUNDED
+}
+
+enum DocumentType {
+  FUNDING_AGREEMENT
+  CREDIT_REPORT
+  OTHER
+}
+
+enum CreditReportStatus {
+  PENDING
+  RECEIVED
+  VERIFIED
+  REJECTED
+}
