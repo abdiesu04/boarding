@@ -16,6 +16,7 @@ export default function LuxuryBackground({
 }: LuxuryBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [mounted, setMounted] = useState(false);
   
   // Get colors based on variant
   const getColors = () => {
@@ -61,6 +62,8 @@ export default function LuxuryBackground({
   };
 
   useEffect(() => {
+    setMounted(true);
+    
     const handleResize = () => {
       setDimensions({
         width: window.innerWidth,
@@ -76,7 +79,7 @@ export default function LuxuryBackground({
   
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !mounted) return;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -198,7 +201,12 @@ export default function LuxuryBackground({
         cancelAnimationFrame(animationId);
       }
     };
-  }, [dimensions, variant, intensity, animated]);
+  }, [dimensions, variant, intensity, animated, mounted]);
+
+  // Don't render during SSR to avoid hydration mismatch
+  if (!mounted) {
+    return <div className="absolute inset-0 -z-10 overflow-hidden" />;
+  }
 
   return (
     <motion.div

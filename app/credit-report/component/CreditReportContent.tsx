@@ -12,6 +12,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import EnhancedInput from "@/components/ui/EnhancedInput";
+import LoadingTransition from "@/components/ui/LoadingTransition";
 
 // Schema for credit report form
 const creditReportSchema = z.object({
@@ -24,6 +25,7 @@ type CreditReportFormData = z.infer<typeof creditReportSchema>;
 export default function CreditReportContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   
   const {
@@ -61,6 +63,18 @@ export default function CreditReportContent() {
   }, []);
 
   if (!mounted) return null;
+  
+  // Show loading transition when redirecting
+  if (isLoading) {
+    return (
+      <LoadingTransition
+        title="Processing Credit Report"
+        message="We're reviewing your credit information and preparing your funding agreement..."
+        nextStep="Document Signing"
+        progress={90}
+      />
+    );
+  }
   
   const onSubmit = async (data: CreditReportFormData) => {
     setIsSubmitting(true);
@@ -105,10 +119,13 @@ export default function CreditReportContent() {
         duration: 3000,
       });
       
+      // Show loading transition
+      setIsLoading(true);
+      
       // Redirect to funding agreement page after success
       setTimeout(() => {
         window.location.href = '/funding-agreement';
-      }, 2000);
+      }, 3000);
       
     } catch (error) {
       console.error("Submission error:", error);
@@ -212,7 +229,7 @@ export default function CreditReportContent() {
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Registration</span>
+              <span className="ml-2 text-xs text-gray-500">Step 1 - Register</span>
             </div>
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
@@ -220,19 +237,19 @@ export default function CreditReportContent() {
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Personal Info</span>
+              <span className="ml-2 text-xs text-gray-500">Step 2 - Personal Info</span>
             </div>
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-white">
                 <span className="text-xs">3</span>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Credit Report</span>
+              <span className="ml-2 text-xs text-gray-500">Step 3 - Credit Report</span>
             </div>
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
                 <span className="text-xs">4</span>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Agreement</span>
+              <span className="ml-2 text-xs text-gray-500">Step 4 - Document Sign</span>
             </div>
                 </div>
               </div>
@@ -244,12 +261,12 @@ export default function CreditReportContent() {
             <h3 className="font-medium text-blue-900">Important Instructions</h3>
           </div>
           <p className="text-blue-900 mb-4">
-            Visit <a href="https://smartcredit.com/palmettostartups" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 underline decoration-2 underline-offset-2 decoration-blue-400 hover:decoration-blue-600 transition-all">SmartCredit.com/palmettostartups</a> to get your credit report. The cost is $24.
+            Please visit SmartCredit to obtain your credit report before proceeding. The cost is $24.
           </p>
           <Link href="https://smartcredit.com/palmettostartups" target="_blank" 
             className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
             <ExternalLink className="h-4 w-4 mr-2" />
-            Open SmartCredit
+            Get Your Credit Report
           </Link>
         </div>
         
@@ -303,7 +320,7 @@ export default function CreditReportContent() {
                     Processing...
                         </span>
                       ) : (
-                  <span>Submit Credit Report</span>
+                  <span>Get Your Credit Report</span>
                       )}
                     </Button>
                 </div>

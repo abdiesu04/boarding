@@ -10,6 +10,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import EnhancedButton from "@/components/ui/EnhancedButton";
 import EnhancedInput from "@/components/ui/EnhancedInput";
 import FloatingElements from "@/components/ui/FloatingElements";
+import LoadingTransition from "@/components/ui/LoadingTransition";
 import { Toggle } from "@/components/ui/toggle";
 import { User, Phone, Home, DollarSign, CreditCard, Calendar, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Shield, Sparkles } from "lucide-react";
 import toast from "react-hot-toast";
@@ -96,6 +97,7 @@ export default function EnhancedPersonalInfoForm() {
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [mounted, setMounted] = useState(false);
   const [clientInfo, setClientInfo] = useState<any>(null);
@@ -215,9 +217,12 @@ export default function EnhancedPersonalInfoForm() {
       
       setIsSuccess(true);
       toast.success("Personal information submitted! Redirecting to credit report...");
+      
+      // Show loading transition
+      setIsLoading(true);
       setTimeout(() => {
         window.location.href = "/credit-report";
-      }, 2000);
+      }, 3000);
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Submission failed",
@@ -470,6 +475,18 @@ export default function EnhancedPersonalInfoForm() {
   };
 
   if (!mounted) return null;
+  
+  // Show loading transition when redirecting
+  if (isLoading) {
+    return (
+      <LoadingTransition
+        title="Processing Your Information"
+        message="We're preparing your credit report assessment. This will just take a moment..."
+        nextStep="Credit Report"
+        progress={75}
+      />
+    );
+  }
 
   if (isSuccess) {
     return (

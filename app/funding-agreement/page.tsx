@@ -282,6 +282,40 @@ export default function FundingAgreementPage() {
       setIsSubmitting(false);
       setIsSuccess(true);
       
+      // Automatically download the signed document
+      setTimeout(() => {
+        if (result.pdfBase64) {
+          // Create a download link for the base64 data
+          const link = document.createElement('a');
+          link.href = result.pdfBase64;
+          link.download = result.fileName || 'funding_agreement.pdf';
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(() => {
+            document.body.removeChild(link);
+          }, 100);
+          toast.success('Agreement automatically downloaded!', {
+            duration: 3000,
+            icon: '📄'
+          });
+        } else if (result.pdfUrl) {
+          // Fallback to Cloudinary URL if base64 is not available
+          const link = document.createElement('a');
+          link.href = result.pdfUrl;
+          link.download = result.fileName || 'funding_agreement.pdf';
+          link.target = '_blank';
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(() => {
+            document.body.removeChild(link);
+          }, 100);
+          toast.success('Agreement automatically downloaded!', {
+            duration: 3000,
+            icon: '📄'
+          });
+        }
+      }, 1000); // Small delay to ensure the UI has updated
+      
       // Store additional session data to maintain login state
       sessionStorage.setItem('userAuthenticated', 'true');
       sessionStorage.setItem('lastActivity', Date.now().toString());
@@ -389,7 +423,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
             </p>
             
             <p className="text-gray-500 text-sm mb-8 text-center">
-              You will be redirected to your dashboard shortly.
+              The signed document has been automatically downloaded. You will be redirected to your dashboard shortly.
             </p>
             
             <div className="flex flex-col space-y-3 w-full max-w-md">
@@ -502,7 +536,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Registration</span>
+              <span className="ml-2 text-xs text-gray-500">Step 1 - Register</span>
             </div>
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
@@ -510,7 +544,7 @@ By signing below, the Client acknowledges they have read, understood, and agree 
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Personal Info</span>
+              <span className="ml-2 text-xs text-gray-500">Step 2 - Personal Info</span>
             </div>
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
@@ -518,13 +552,13 @@ By signing below, the Client acknowledges they have read, understood, and agree 
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Credit Report</span>
+              <span className="ml-2 text-xs text-gray-500">Step 3 - Credit Report</span>
             </div>
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-white">
                 <span className="text-xs">4</span>
               </div>
-              <span className="ml-2 text-xs text-gray-500">Agreement</span>
+              <span className="ml-2 text-xs text-gray-500">Step 4 - Document Sign</span>
             </div>
           </div>
         </div>

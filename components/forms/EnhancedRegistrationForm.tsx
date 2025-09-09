@@ -304,11 +304,11 @@ export default function EnhancedRegistrationForm() {
       sessionStorage.setItem('registrationCompleted', 'true');
       
       // Show success message
-      toast.success('Registration successful! Redirecting to credit report...');
+      toast.success('Registration successful! Redirecting to personal info...');
       
-      // Redirect to credit report page after successful registration
+      // Redirect to personal-info page after successful registration
       setTimeout(() => {
-        window.location.replace('/credit-report');
+        window.location.replace('/personal-info');
       }, 2000);
       
     } catch (error) {

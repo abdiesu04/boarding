@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     // Optionally send onboarding email (can use name as firstName)
     try {
       const { sendOnboardingEmail } = await import('@/lib/email');
-      const nextStepUrl = `/credit-report?token=${encodeURIComponent(token)}`;
+      const nextStepUrl = `/personal-info?token=${encodeURIComponent(token)}`;
       await sendOnboardingEmail(user.email, {
         name: user.firstName,
         nextStepUrl

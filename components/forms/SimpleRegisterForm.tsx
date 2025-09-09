@@ -114,14 +114,14 @@ export default function SimpleRegisterForm() {
       sessionStorage.setItem("userAuthenticated", "true");
       sessionStorage.setItem("lastActivity", Date.now().toString());
       setIsSuccess(true);
-      toast.success("Registration successful! Redirecting to dashboard...");
+      toast.success("Registration successful! Redirecting to personal info...");
       setTimeout(() => {
         // Check session validity before redirecting
         const isAuthenticated = sessionStorage.getItem("userAuthenticated") === "true";
         const token = localStorage.getItem("token");
         if (isAuthenticated && token) {
-          // Redirect to dashboard
-          window.location.replace('/dashboard');
+          // Redirect to personal-info
+          window.location.replace('/personal-info');
         } else {
           toast.error("Session invalid. Please log in again.", {
             icon: <AlertCircle className="h-5 w-5" />,
@@ -142,7 +142,7 @@ export default function SimpleRegisterForm() {
         <div className="py-10 px-8 text-center">
           <h2 className="text-2xl font-bold mb-4 text-slate-800">Registration Complete!</h2>
           <p className="text-lg mb-2 text-slate-600">Thank you for registering.</p>
-          <p className="text-base mb-6 text-slate-500">Redirecting to your dashboard...</p>
+          <p className="text-base mb-6 text-slate-500">Redirecting to personal info...</p>
         </div>
       </GlassCard>
     );

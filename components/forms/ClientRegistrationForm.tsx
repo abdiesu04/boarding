@@ -153,9 +153,9 @@ export default function ClientRegistrationForm() {
       setIsSubmitting(false);
       setIsSuccess(true);
       
-      // Redirect to credit report page after successful registration
+      // Redirect to personal-info page after successful registration
       setTimeout(() => {
-        window.location.href = '/credit-report';
+        window.location.href = '/personal-info';
       }, 3000);
       
     } catch (error) {
