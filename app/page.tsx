@@ -9,7 +9,7 @@ import { ArrowRight } from "lucide-react";
 import LuxuryBackground from "@/components/ui/LuxuryBackground";
 import FloatingElements from "@/components/ui/FloatingElements";
 import DecorativeElements from "@/components/ui/DecorativeElements";
-import { Mail, Lock, LogIn, AlertCircle } from "lucide-react";
+import { Mail, Lock, LogIn, AlertCircle, User } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import EnhancedInput from "@/components/ui/EnhancedInput";
 import EnhancedButton from "@/components/ui/EnhancedButton";
@@ -288,22 +288,31 @@ export default function Home() {
                   {isLoading ? "Signing you in..." : "Sign In"}
                 </EnhancedButton>
                 
-                <div className="relative">
+                <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">or</span>
+                    <span className="px-4 bg-white text-gray-500 font-medium">New to our platform?</span>
                   </div>
                 </div>
                 
-                <button
+                {/* Create Account Button - Bigger and Below Fields */}
+                <motion.button
                   type="button"
                   onClick={() => setShowRegister(true)}
-                  className="w-full py-3 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200 border border-blue-200 hover:border-blue-300"
+                  className="w-full h-14 px-6 text-base font-bold text-white bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 rounded-lg border border-emerald-400/20 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  whileHover={{ y: -2, scale: 1.02 }}
+                  whileTap={{ y: 0, scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9 }}
                 >
-                  Create new account
-                </button>
+                  <span className="flex items-center justify-center gap-3">
+                    <User className="h-5 w-5" />
+                    Create New Client Account
+                  </span>
+                </motion.button>
               </motion.div>
             </form>
           </GlassCard>
