@@ -117,21 +117,26 @@ export default function Home() {
         userAuthenticated: sessionStorage.getItem('userAuthenticated'),
         lastActivity: sessionStorage.getItem('lastActivity')
       });
+      const isAdmin = result?.user?.role === 'ADMIN';
+      const targetRoute = isAdmin ? '/admin' : '/dashboard';
+            
       // Store user role for role-based access
       if (result.user && result.user.role) {
         sessionStorage.setItem('userRole', result.user.role);
         console.log("User role stored:", result.user.role);
       }
       // Debug info
+
       console.log('Login success, preparing to redirect with token:', {
         tokenExists: !!result.token,
         tokenInLocalStorage: !!localStorage.getItem('token'),
         tokenInCookie: cookieExists('token'),
         userAuthenticated: sessionStorage.getItem('userAuthenticated') === 'true',
-        redirectingTo: '/dashboard'
+        redirectingTo: targetRoute
       });
       // Show a message before redirecting
-      toast.success("Login successful! Redirecting to dashboard...");
+      toast.success(isAdmin ? "Welcome Admin! Redirecting to Admin Page..." : "Login successful! Redirecting to your dashboard...");
+     
       // Add a small delay to ensure toast is shown and cookies are set
       console.log("Starting redirection process...");
       setTimeout(() => {
@@ -141,16 +146,16 @@ export default function Home() {
         // IMPORTANT: Force a hard redirect to dashboard
         try {
           console.log("Redirect initiated with window.location.href to /dashboard");
-          window.location.href = '/dashboard';
+          window.location.href = targetRoute;
           // Fallback if the first redirect doesn't work
           setTimeout(() => {
             console.log("Fallback redirect with replace...");
-            window.location.replace('/dashboard');
+            window.location.replace(targetRoute);
           }, 1000);
         } catch (e) {
           console.error("Redirect error:", e);
           alert("Redirect failed. Please click OK to try again.");
-          window.location.href = '/dashboard';
+          window.location.href = targetRoute;
         }
       }, 1500);
     } catch (error) {
@@ -164,15 +169,19 @@ export default function Home() {
 
   // Check if user is already logged in and redirect to dashboard
   useEffect(() => {
-    // Check for authentication token
-    const token = localStorage.getItem('token');
-    const isAuthenticated = sessionStorage.getItem('userAuthenticated');
-    const lastActivity = sessionStorage.getItem('lastActivity');
-    // If we have a token and authentication, redirect to dashboard
-    if (token && isAuthenticated === 'true') {
-      console.log('User already logged in, redirecting to dashboard');
-      window.location.replace('/dashboard');
-    }
+     const token = localStorage.getItem('token');
+        const isAuthenticated = sessionStorage.getItem('userAuthenticated');
+        const lastActivity = sessionStorage.getItem('lastActivity');
+        const role = sessionStorage.getItem('userRole');
+        const isAdmin = role === 'ADMIN' || role === 'SUPER_ADMIN';
+        const targetRoute = isAdmin ? '/admin' : '/dashboard';
+                
+        
+        // If we have a token and authentication, redirect to dashboard
+        if (token && isAuthenticated === 'true') {
+          console.log('User already logged in, redirecting to dashboard');
+          window.location.replace(targetRoute);
+        }
   }, []);
 
   return (

@@ -110,6 +110,9 @@ export default function LoginForm() {
             document.cookie = `token=${result.token}; path=/; max-age=604800; SameSite=Strict`;
             console.log("Token also directly set in cookie");
             
+            const isAdmin = result?.user?.role === 'ADMIN';
+            const targetRoute = isAdmin ? '/admin' : '/dashboard';
+            // Debug info
             sessionStorage.setItem('userAuthenticated', 'true');
             sessionStorage.setItem('lastActivity', Date.now().toString());
             console.log("Session data stored:", {
@@ -122,18 +125,17 @@ export default function LoginForm() {
               sessionStorage.setItem('userRole', result.user.role);
               console.log("User role stored:", result.user.role);
             }
-            
-            // Debug info
             console.log('Login success, preparing to redirect with token:', {
               tokenExists: !!result.token,
               tokenInLocalStorage: !!localStorage.getItem('token'),
               tokenInCookie: cookieExists('token'),
               userAuthenticated: sessionStorage.getItem('userAuthenticated') === 'true',
-              redirectingTo: '/dashboard'
+              redirectingTo: targetRoute
             });
             
             // Show a message before redirecting
-            toast.success("Login successful! Redirecting to dashboard...");
+            toast.success(isAdmin ? "Welcome Admin! Redirecting to Admin Page..." : "Login successful! Redirecting to your dashboard...");
+     
             
             // Add a small delay to ensure toast is shown and cookies are set
             console.log("Starting redirection process...");
@@ -145,17 +147,17 @@ export default function LoginForm() {
               // IMPORTANT: Force a hard redirect to dashboard
               try {
                 console.log("Redirect initiated with window.location.href to /dashboard");
-                window.location.href = '/dashboard';
+                window.location.href = targetRoute;
                 
                 // Fallback if the first redirect doesn't work
                 setTimeout(() => {
                   console.log("Fallback redirect with replace...");
-                  window.location.replace('/dashboard');
+                  window.location.replace(targetRoute);
                 }, 1000);
               } catch (e) {
                 console.error("Redirect error:", e);
                 alert("Redirect failed. Please click OK to try again.");
-                window.location.href = '/dashboard';
+                window.location.href = targetRoute;
               }
             }, 1500);
             
@@ -174,11 +176,15 @@ export default function LoginForm() {
         const token = localStorage.getItem('token');
         const isAuthenticated = sessionStorage.getItem('userAuthenticated');
         const lastActivity = sessionStorage.getItem('lastActivity');
+        const role = sessionStorage.getItem('userRole');
+        const isAdmin = role === 'ADMIN' || role === 'SUPER_ADMIN';
+        const targetRoute = isAdmin ? '/admin' : '/dashboard';
+                
         
         // If we have a token and authentication, redirect to dashboard
         if (token && isAuthenticated === 'true') {
           console.log('User already logged in, redirecting to dashboard');
-          window.location.replace('/dashboard');
+          window.location.replace(targetRoute);
         }
       }, []);
   return (
