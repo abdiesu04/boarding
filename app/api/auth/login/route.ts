@@ -49,8 +49,8 @@ export async function POST(request: Request) {
       role: userRole,
     });
     
-    // Return success response with token
-    return NextResponse.json({
+    // Return success response with token and set cookie for middleware-protected routes
+    const response = NextResponse.json({
       message: 'Login successful',
       token,
       user: {
@@ -61,6 +61,18 @@ export async function POST(request: Request) {
         role: userRole,
       },
     }, { status: 200 });
+
+    response.cookies.set({
+      name: 'auth-token',
+      value: token,
+      httpOnly: true,
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return response;
     
   } catch (error) {
     console.error('Login error:', error);

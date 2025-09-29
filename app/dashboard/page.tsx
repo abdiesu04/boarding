@@ -162,6 +162,7 @@ export default function DashboardPage() {
         if (response.ok) {
           const data = await response.json();
           console.log('Client info loaded successfully');
+          console.log(data)
           setClientInfo(data.client);
           
           // If we got here from document signing, clear the flag
@@ -411,7 +412,7 @@ export default function DashboardPage() {
                     <Clock className="h-6 w-6 text-blue-600" />
             </div>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    In Progress
+                   {clientInfo.fundingStatus}
                   </span>
               </div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-1">Application Status</h3>

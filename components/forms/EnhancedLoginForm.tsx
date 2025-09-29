@@ -130,17 +130,22 @@ export default function EnhancedLoginForm() {
         console.log("User role stored:", result.user.role);
       }
       
+      // Decide target route by role
+      const isAdmin = result?.user?.role === 'ADMIN' || result?.user?.role === 'SUPER_ADMIN';
+      const targetRoute = isAdmin ? '/admin' : '/dashboard';
+
       // Debug info
       console.log('Login success, preparing to redirect with token:', {
         tokenExists: !!result.token,
         tokenInLocalStorage: !!localStorage.getItem('token'),
         tokenInCookie: cookieExists('token'),
         userAuthenticated: sessionStorage.getItem('userAuthenticated') === 'true',
-        redirectingTo: '/dashboard'
+        role: result?.user?.role,
+        redirectingTo: targetRoute
       });
       
       // Show a message before redirecting
-      toast.success("Login successful! Redirecting to dashboard...");
+      toast.success(isAdmin ? "Welcome Admin! Redirecting to dashboard..." : "Login successful! Redirecting to your dashboard...");
       
       // Add a small delay to ensure toast is shown and cookies are set
       console.log("Starting redirection process...");
@@ -148,21 +153,21 @@ export default function EnhancedLoginForm() {
         console.log("Final cookie check before redirect:");
         logAllCookies();
         
-        console.log("Executing redirect to dashboard now...");
+        console.log("Executing redirect now...", targetRoute);
         // IMPORTANT: Force a hard redirect to dashboard
         try {
-          console.log("Redirect initiated with window.location.href to /dashboard");
-          window.location.href = '/dashboard';
+          console.log("Redirect initiated with window.location.href to", targetRoute);
+          window.location.href = targetRoute;
           
           // Fallback if the first redirect doesn't work
           setTimeout(() => {
             console.log("Fallback redirect with replace...");
-            window.location.replace('/dashboard');
+            window.location.replace(targetRoute);
           }, 1000);
         } catch (e) {
           console.error("Redirect error:", e);
           alert("Redirect failed. Please click OK to try again.");
-          window.location.href = '/dashboard';
+          window.location.href = targetRoute;
         }
       }, 1500);
       
